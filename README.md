@@ -24,6 +24,8 @@
 
 ## 效果预览
 
+整窗一块材质：壁纸从侧栏贯通到内容区，消息面板与输入框为同一套玻璃。
+
 | 浅色模式 | 深色模式 |
 | --- | --- |
 | ![浅色模式](docs/screenshot-light.png) | ![深色模式](docs/screenshot-dark.png) |
@@ -62,7 +64,7 @@ dsh plugin --profile web add link:/path/to/dsh-columbina-theme
 
 ### 3. 重启 DSH
 
-重新启动 `dsh web`（或桌面端 DSH），并**硬刷新浏览器**（Ctrl+F5；桌面端会重新加载本地 index）。打开 **设置 → 内置插件 → 哥伦比娅主题**，或在 **插件** 页打开 `dsh-columbina-theme` 的详情页，即可配置。
+重新启动 `dsh web`（或桌面端 DSH），并**硬刷新浏览器**（Ctrl+F5；桌面端会重新加载本地 index）。打开 **设置 → 通用 → 哥伦比娅主题**，或在 **插件** 页打开 `dsh-columbina-theme` 的详情页，即可配置。
 
 ### 临时禁用
 
@@ -115,7 +117,7 @@ src/index.js    Host 插件：导出 Config（全部字段 volatile）+ apply；
                 （Web 端的 index.html 与桌面端本地 index 共用同一张注入表）
 lib/client.js   浏览器 / 桌面端客户端插件：主题 token 覆盖（ctx.theme.overrideTokens）、
                 --columbina-* 自定义属性、选中标题特效、设置卡片
-                （注册到 settings.plugins.tab 与 plugins.bundle.config）
+                （注册到 settings.general.item 与 plugins.bundle.config）
 assets/backgrounds/  预设背景目录：放入图片即自动成为新预设
 cordis.patch.yml     bundle 补丁（向组合中插入插件条目）
 scripts/smoke-test.mjs   端到端冒烟测试（需要 playwright-core 与系统 Edge/Chrome）

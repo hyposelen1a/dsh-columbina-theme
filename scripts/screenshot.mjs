@@ -56,7 +56,7 @@ const dismissDialogs = async () => {
     const closed = await page.evaluate(() => {
       const dialog = document.querySelector('[role="dialog"]')
       const button = dialog?.querySelector('button[aria-label="关闭"], button[aria-label="Close"]')
-        ?? [...(dialog?.querySelectorAll('button') ?? [])].find((node) => /^(继续|关闭|Close|Continue)$/.test((node.textContent || '').trim()))
+        ?? [...(dialog?.querySelectorAll('button') ?? [])].find((node) => /^(继续|关闭|稍后配置|跳过|Close|Continue|Later|Skip)$/.test((node.textContent || '').trim()))
       if (!button) return false
       button.click()
       return true
