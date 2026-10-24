@@ -2,6 +2,39 @@
 
 All notable changes to this project are documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- 整窗材质层：把壁纸从「只在侧栏透出来」推进到整窗一块材质。宿主原本给会话列（`_root`）、会话内容框（`_frame`）、右侧面板页（`_pane`）各铺一层 `--dsw-alias-bg-base`（暗色下 `rgba(21,21,23,.25)`），侧栏却是透明 —— 于是侧栏与内容区之间出现一道 28 灰阶的竖直色差线，内容框再叠一层还让输入框上沿多出一条横台阶。现在统一归零，靠 `background-attachment:fixed` 让壁纸纹理跨元素对齐。浮层/菜单走 `--dsw-alias-bg-layer-2` 一类分层 token，不受影响。
+- 玻璃化消息面板：用户气泡（`_userRow _bubble`）与助手消息块（`.v5IAXa_root`，AssistantMarkdown 的根）套同一套玻璃容器（模糊 + 淡蒙版 + 20px 圆角），助手块用负外边距把内边距伸到列宽之外，正文左右对齐位置不变；压在壁纸上文字仍清晰。
+- 「消息面板不透明度」设置项（0%–60%，默认 12%，存 `localStorage`，改动即时生效）：浓度越低模糊与描边一起等比衰减，0% 时面板彻底不存在。
+- 「输入框玻璃浓度」设置项（0%–100%，默认 50%，存 `localStorage`，改动即时生效）：控制卡片内那张壁纸副本上再压多少蒙版——0% 与页面同深、只剩模糊，越高越实。
+- 「聊天框效果」两档真正区分开：液态玻璃 = `blur 20px + saturate 130%`，高斯模糊 = `blur 14px + saturate 100%`；作用于消息面板、提问卡片与输入框玻璃。
+- 提问选择卡片（`QuestionComposer.module.css` 的 `_card`）套上玻璃容器：这张卡片原生靠 `--dsw-specific-input-major` 铺底，token 归零后就裸在壁纸上、与背景混作一团，现在给它同款材质（+12px 模糊、0.5px 亮环、柔和投影）。
+- 深色主题下 `<select>` / `<option>` 的下拉列表配色修复（白底白字）。
+
+### Changed
+
+- 设置卡片从「设置 → 内置插件」搬到「设置 → 通用」（`settings.general.item`，order 12），与其它界面主题放在一起；插件详情页的自动配置表单保留。
+- 输入框不再固定 80% 不透明：`--dsw-specific-input-major` 归零后，输入框卡片自己铺一层「同一张固定壁纸的副本 + `filter:blur()` + 可调蒙版」，纹理与整窗严格对齐，与会话区同材质，不再是一块「第三块」。
+- 侧栏、标题栏、底部状态区与其外壳统一透明，边界不再靠色差区分。
+
+### Fixed
+
+- 侧栏与会话列之间的竖直色差线（实测 x=280 处 28 灰阶）：来自 `--dsw-alias-bg-base` 只在会话列一侧铺底。
+- 输入框上下的横向过渡线与分块：`conversation.input.dock` 与 composer 座位区的顶边描边、各层 composer 容器的底色/阴影统一清理。
+- 会话列表底部 24px 渐变遮罩（`._9lTDKa_fade`，`transparent → --dsw-specific-sidebar-fill`）被染成一条暗带 + 硬下沿：该 token 在整窗材质下必须给 `transparent`，给半透明就会露馅。
+- 输入框那圈圆角描边丢失：它其实是 composer 卡片自身 `rgba(255,255,255,.12) 0 0 0 .5px` 的 box-shadow 环（radius 28px），此前被通配的 `box-shadow:none` 一并清掉，现已按原生观感补回。
+- 悬停发送/停止按钮时整块会话区闪动：卡片上那层 `blur 20px` 的 `backdrop-filter` 会在卡片局部重绘时反复重新合成（Windows/Electron 上表现为闪）。先以 0.92 实底收场，后又换回玻璃：不再挂 `backdrop-filter`，而是把壁纸副本画进卡片的 `::before` 再 `filter:blur()`，模糊只在卡片重绘时算一次，既有玻璃质感又不闪。提问选择卡片保留 `backdrop-filter`，实测不受影响。
+- 审批卡片（`.j_8BDW_card`）整张透明：它同样以 `--dsw-specific-input-major` 铺底，token 归平后标题、命令与「允许 / 拒绝」按钮直接压在壁纸上。现按提问卡片同款玻璃补齐（0.34 蒙版 + 12px 模糊 + 0.5px 亮环 + 投影），浓度写死、不跟面板滑条走。
+- 旁问浮层（`@michengai/dsh-btw` 的 `.btw-selection-dialog` 提问框 / `.btw-selection-menu` 选中浮条 / `.btw-bubble` 回答卡）透到壁纸上：它们的底色是 `--dsw-alias-bg-layer-2`，暗色下落到半透明值时字就压在花纹上（薇斯纳下是实的是因为它不做整窗材质）。现在不依赖那个 token，直接给 0.94 实底 + 0.5px 亮环 + 投影。
+
+### Notes
+
+- 整窗材质需要把 `--dsw-specific-sidebar-fill`、`--dsw-specific-input-major`、`--dsw-alias-bg-base` 归零，「输入框颜色」「侧边栏颜色」两项配置在开启后不再有可见效果（值仍保存）。
+- 侧栏上不能加 `isolation` / `backdrop-filter` / `transform`：任何建立层叠上下文的写法都会把就地渲染的全屏弹层锁到内容区下面（表现为面板跑到下层、点不动）。
+
 ## [0.2.1] - 2026-10-18
 
 ### Fixed
