@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file.
 
-## [Unreleased]
+## [0.2.2] - 2026-10-24
 
 ### Added
 
@@ -19,6 +19,7 @@ All notable changes to this project are documented in this file.
 - 设置卡片从「设置 → 内置插件」搬到「设置 → 通用」（`settings.general.item`，order 12），与其它界面主题放在一起；插件详情页的自动配置表单保留。
 - 输入框不再固定 80% 不透明：`--dsw-specific-input-major` 归零后，输入框卡片自己铺一层「同一张固定壁纸的副本 + `filter:blur()` + 可调蒙版」，纹理与整窗严格对齐，与会话区同材质，不再是一块「第三块」。
 - 侧栏、标题栏、底部状态区与其外壳统一透明，边界不再靠色差区分。
+- README 的浅色 / 深色预览图更新为 1600×900 整窗截图；`scripts/screenshot.mjs` 在截图前会自动关闭首次启动的 API Key 弹窗。
 
 ### Fixed
 
