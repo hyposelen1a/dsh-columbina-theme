@@ -109,6 +109,32 @@ check('theme tokens applied on body', applied.tokenBgBase.startsWith('rgba('), a
 check('selected session title glow', applied.selectedRow && applied.selectedTitleBgImage.includes('gradient'), applied.selectedTitleBgImage)
 check('selected title weight', applied.selectedTitleWeight === '600', applied.selectedTitleWeight)
 
+// The skin layer is applied by the client half after boot. On rc5 the plugin
+// targets stable data-* hooks for the composer / question / approval surfaces,
+// so the injected stylesheet must carry them even though no message is rendered.
+await page.waitForFunction(() => document.querySelector('style[data-columbina-skin-style]') !== null, { timeout: 20000 }).catch(() => {})
+const skin = await page.evaluate(() => {
+  const tag = document.querySelector('style[data-columbina-skin-style]')
+  const card = document.querySelector('[data-composer-card]')
+  const css = tag ? tag.textContent : ''
+  return {
+    injected: tag !== null,
+    hasComposerHook: css.includes('[data-composer-card]'),
+    hasQuestionHook: css.includes('[data-question-key]'),
+    hasApprovalHook: css.includes('[data-approval-key]'),
+    hasAssistantRoot: /\.(xMeOpW|v5IAXa)_root/.test(css),
+    composerCard: card !== null,
+    composerRadius: card ? getComputedStyle(card).borderTopLeftRadius : null,
+  }
+})
+check('skin layer injected', skin.injected)
+check('skin targets rc5 composer hook', skin.hasComposerHook)
+check('skin targets rc5 question hook', skin.hasQuestionHook)
+check('skin targets rc5 approval hook', skin.hasApprovalHook)
+check('skin targets an assistant Markdown root hash', skin.hasAssistantRoot)
+check('composer card present', skin.composerCard)
+check('composer card radius follows host token', Number.parseFloat(skin.composerRadius || '0') >= 20, skin.composerRadius)
+
 // Simulate the Desktop Windows titlebar attribute: the app's own rule paints
 // the whole frame with the opaque sidebar fill, which would hide the wallpaper
 // layer. The theme must keep that frame on the translucent base surface.

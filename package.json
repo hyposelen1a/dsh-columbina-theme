@@ -1,6 +1,6 @@
 {
   "name": "dsh-columbina-theme",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "A Genshin Impact Columbina (哥伦比娅) themed plugin for DeepSeek Harness (Web and Desktop): preset/custom background images with a translucent mask, per light/dark scheme palettes, and a special glow for the active conversation title.",
   "author": "columbina-theme contributors",
   "type": "module",
@@ -14,6 +14,7 @@
     "src/",
     "lib/client.js",
     "assets/backgrounds/",
+    "!assets/backgrounds/*-private.*",
     "docs/screenshot-light.png",
     "docs/screenshot-dark.png",
     "cordis.patch.yml",
@@ -24,7 +25,7 @@
   ],
   "engines": {
     "node": ">=22.19",
-    "dsh": ">=0.2.0-rc.1 <0.3.0"
+    "dsh": ">=0.2.1-rc.5 <0.3.0"
   },
   "dependencies": {
     "@deepseek-ai/schemastery": "^3.18.5",
@@ -36,10 +37,10 @@
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.5",
-    "@deepseek-ai/dsh-host-webserver": "^0.2.0-rc.1",
-    "@deepseek-ai/dsh-settings": "^0.2.0-rc.1",
-    "@deepseek-ai/dsh-client-ui-theme": "^0.2.0-rc.1",
-    "@deepseek-ai/dsh-client-ui-settings-plugins": "^0.2.0-rc.1"
+    "@deepseek-ai/dsh-host-webserver": "^0.2.1-rc.5",
+    "@deepseek-ai/dsh-settings": "^0.2.1-rc.5",
+    "@deepseek-ai/dsh-client-ui-theme": "^0.2.1-rc.5",
+    "@deepseek-ai/dsh-client-ui-settings-plugins": "^0.2.1-rc.5"
   },
   "dsh": {
     "manifestVersion": 1,

@@ -2,6 +2,21 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.2.3] - 2026-10-31
+
+### Changed
+
+- 适配 DeepSeek Harness `0.2.1-rc.5`：`engines.dsh` 改为 `>=0.2.1-rc.5 <0.3.0`，peer 依赖升到 `^0.2.1-rc.5`（`@deepseek-ai/cordis` 仍为 `^4.0.5`，`schemastery` 仍为 `3.18.5`）。Host 侧的 settings forms（`describe` / `update` / `configure`）、`webserver/index-inject` 结构化注入与 `webServer.register` 路由在 rc5 上接口未变；已在 `0.2.1-rc.5` 的 Web Host 上实测 index 静态样式注入、配置读写与预设 / 缩略图路由。
+- 客户端优先改用 rc5 的稳定 `data-*` 钩子，不再依赖每次构建都会变的 CSS Module 哈希：输入框卡片改用 `[data-composer-card]`，提问卡片改用 `[data-question-key] > [class*="_card"]`，审批卡片改用 `[data-approval-key] > [class*="_card"]`；旧哈希类名保留为回退。
+- 助手消息根类更新为 rc5 的 `.xMeOpW_root`（rc2 桌面构建为 `.v5IAXa_root`，两者并列在 `ASSISTANT_MD` 中），修复 rc5 下助手消息失去玻璃底、正文直接压在壁纸上的问题。
+- 输入框卡片的圆角与玻璃副本改用 `--dsw-radius-panel`（rc5 为 28px），`::before` 的外扩 / 裁切同步跟随，卡片描边与玻璃不再错位。
+- composer 相关选择器统一收敛为 `[class*="_composer"]` 前缀，清掉 rc5 中已不存在的 `_composerLayout` / `_composerBar` / `_composerBlock`；移除从未被引用的 `PANELS` / `.kshsua_root` 常量。
+
+### Fixed
+
+- rc5 下提问选择卡片、审批卡片重新变成透明（`--dsw-specific-input-major` 归零后没有底色，且旧哈希选择器已匹配不到）的问题。
+- rc5 下输入框玻璃圆角与宿主卡片圆角、描边不贴合的问题。
+
 ## [0.2.2] - 2026-10-24
 
 ### Added

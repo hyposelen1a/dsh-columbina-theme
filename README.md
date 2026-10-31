@@ -32,7 +32,7 @@
 
 ## 兼容性
 
-针对 **DeepSeek Harness `0.2.1-rc.2`**（`0.2.x` 系列）开发：`@deepseek-ai/cordis ^4.0.5`、`dsh-* ^0.2.0-rc.1`（已在 `0.2.1-rc.2` 的 Web 与 Desktop 两端验证）。设置改用 DSH 0.2 的插件 Config / settings forms 模型（volatile 字段热更新），不再依赖已删除的 `ctx.settings.register` 与 `@deepseek-ai/dsh-client-ui-slots` 包。DSH 仍处于 developer preview 阶段，接口可能发生破坏性变更；升级 DSH 后如发现主题失效，请先查看 [CHANGELOG](CHANGELOG.md) 与仓库的 release 说明。
+针对 **DeepSeek Harness `0.2.1-rc.5`**（`0.2.x` 系列）开发：`@deepseek-ai/cordis ^4.0.5`、`dsh-* ^0.2.1-rc.5`（Host 端已在 `0.2.1-rc.5` 实测；桌面端与 Web 端共用同一张 index 注入表）。设置使用 DSH 0.2 的插件 Config / settings forms 模型（volatile 字段热更新），不再依赖已删除的 `ctx.settings.register` 与 `@deepseek-ai/dsh-client-ui-slots` 包；客户端界面钩子优先使用 rc5 的稳定 `data-*` 属性（输入框 `data-composer-card`、提问 `data-question-key`、审批 `data-approval-key`）。DSH 仍处于 developer preview 阶段，接口与 CSS Module 哈希都可能发生破坏性变更；升级 DSH 后如发现主题失效，请先查看 [CHANGELOG](CHANGELOG.md) 与仓库的 release 说明。
 
 ## 安装
 
@@ -107,6 +107,8 @@ dsh plugin --profile web add link:/path/to/dsh-columbina-theme
 
 > 位图（png/jpg/webp/gif）**超过 512KB** 时，设置网格自动使用服务端生成的预览缩略图（640px 宽 JPEG，缓存于 `$DSH_HOME/storages/dsh-columbina-theme/thumbs/`），点选作为背景时才加载原图；小图与 SVG 直接用原图。
 
+> 文件名以 `-private` 结尾的图片（如 `columbina-3-private.jpg`）视为**本机自用素材**：`.gitignore` 会忽略它们，`package.json` 的 `files` 也把它们排除在 npm 包之外（发布前可用 `npm pack --dry-run` 核对），放进来不会被提交或分发。
+
 ## 开发
 
 ```text
@@ -125,6 +127,8 @@ scripts/screenshot.mjs   生成 README 截图
 ```
 
 主题在两端各有一份取值表（host 的 `SCHEME_DEFAULTS`/`surfaceTokens`/`labelTokens` 与 client 的 `buildTokens`），两者必须保持一致——host 负责首帧静态注入（Web 与桌面端共用结构化注入行），client 负责运行期热更新（presenter 写入的 body 内联变量优先于静态样式表）。改动任何一边后重启 DSH Web 生效，并可用冒烟测试核对。
+
+DSH 的客户端样式是 CSS Module，类名哈希随每次构建变化，因此 `lib/client.js` 里能用 `data-*` 钩子的地方不要写哈希：输入框卡片、提问卡片、审批卡片分别用 `[data-composer-card]`、`[data-question-key]`、`[data-approval-key]`；只有助手消息根类还需要哈希，集中在 `ASSISTANT_MD` 里（rc5 为 `.xMeOpW_root`，rc2 桌面构建为 `.v5IAXa_root`）。升级 DSH 后先对照 rc5 的 `AssistantMarkdown.module.css` 更新该常量。
 
 冒烟测试（需要 DSH 0.2 的已认证 URL；脚本会关闭首次启动的引导弹窗）：
 
@@ -146,6 +150,7 @@ node scripts/smoke-test.mjs
 - 表面透明度通过 CSS token 覆盖实现，DSH 版本升级后个别表面可能不再受控。
 - 整窗材质层依赖若干哈希类名（`_sidebarCol`、`_centerCol`、`_rightbarCol`、`_composerSeat`、`_userRow`/`_bubble`）与 `[data-slot="conversation.composer.bar"]` 这类数据槽位；DSH 调整 DOM 结构时，相应地板的透明化会失效（表现为某一块重新出现底色），需要同步更新选择器。
 - 整窗材质需要把 `--dsw-specific-input-major`、`--dsw-specific-sidebar-fill`、`--dsw-alias-bg-base` 三个 token 归零，因此「输入框颜色」「侧边栏颜色」两项在启用后不再产生可见效果（配置值仍会保存，仅被材质层覆盖）。
+- 助手消息面板的根类仍是 CSS Module 哈希（rc5 为 `.xMeOpW_root`，rc2 桌面构建为 `.v5IAXa_root`）：DSH 每次构建都可能改变它，升级后若助手消息不再有玻璃底，把新哈希加入 `lib/client.js` 的 `ASSISTANT_MD` 即可；输入框 / 提问 / 审批卡片已改用 `data-*` 钩子，不受影响。
 - 设置写入使用 DSH 的 settings forms（profile patch 层）；多实例共享同一 profile 时，并发写入以最后一次为准。
 
 ## 素材版权说明

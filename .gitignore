@@ -2,3 +2,6 @@ node_modules/
 .pnpm-store/
 *.tgz
 .DS_Store
+
+# 仅本机自用的背景素材（文件名带 -private），不提交、不随包发布
+assets/backgrounds/*-private.*
